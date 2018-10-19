@@ -17,35 +17,7 @@ router.post('/signUp',(req,res,next) => {
   })
 });
 
-<<<<<<< HEAD
-router.post('/fireLoc',(req,res,next) => {
-  firebase.database().ref('fire_loc/'+ req.body.lat + req.body.long).set({
-    lat: req.body.lat,
-    long :req.body.long,
-    isVerified:false,
-    isOpen:true,
-    openDate:"12/12/12",
-    closeDate:"1/1/1/",
-    discription:"test discp",
-    imgPath:"test/path",
-
-  });
-  res.json({
-    "Sucess":"Success"
-  })
-
-});
-router.post('/rehabLoc',(req,res,next)=>{
-  firebase.database().ref('rehab_loc/'+req.body.lat+req.body.long).push({
-    lat:req.body.lat,
-    long:req.body.long,
-    phoneNo:req.body.phoneNo
-
-  })
-})
-=======
 router.use('/fireLoc',require('./fire'));
->>>>>>> 7fc3fe031ccf2b5703eb83794ef9d786ae4357ef
-
+router.use('/rehabLoc',require('./rehabLoc'));
 
 module.exports = router;

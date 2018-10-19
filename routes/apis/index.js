@@ -9,10 +9,12 @@ firebase.initializeApp(firebaseConfig);
 
 
 router.post('/signUp',(req,res,next) => {
-  firebase.database().ref('users/'+ req.body.mobileNo).push({
+  firebase.database().ref('users/'+ req.body.mobileNo).set({
     ssn: req.body.ssn,
   });
-
+  res.json({
+    "Sucess":"Success"
+  })
 });
 
 router.get('/fireLoc',(req,res,next) => {

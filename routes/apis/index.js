@@ -17,6 +17,7 @@ router.post('/signUp',(req,res,next) => {
   })
 });
 
+<<<<<<< HEAD
 router.post('/fireLoc',(req,res,next) => {
   firebase.database().ref('fire_loc/'+ req.body.lat + req.body.long).set({
     lat: req.body.lat,
@@ -42,6 +43,9 @@ router.post('/rehabLoc',(req,res,next)=>{
 
   })
 })
+=======
+router.use('/fireLoc',require('./fire'));
+>>>>>>> 7fc3fe031ccf2b5703eb83794ef9d786ae4357ef
 
 
 module.exports = router;

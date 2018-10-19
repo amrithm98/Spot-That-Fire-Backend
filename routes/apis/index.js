@@ -8,15 +8,8 @@ const firebaseConfig = require('../../firebaseConfig.js');
 firebase.initializeApp(firebaseConfig);
 
 
-router.post('/signUp',(req,res,next) => {
-  firebase.database().ref('users/'+ req.body.mobileNo).set({
-    ssn: req.body.ssn,
-  });
-  res.json({
-    "Sucess":"Success"
-  })
-});
 
+router.use('/user',require('./user'))
 router.use('/fireLoc',require('./fire'));
 router.use('/rehabLoc',require('./rehabLoc'));
 

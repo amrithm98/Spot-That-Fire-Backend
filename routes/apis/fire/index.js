@@ -2,8 +2,6 @@ const express = require('express');
 const app = express();
 const debug = require('debug')('index');
 const router = express.Router();
-const firebase = require('firebase');
-const firebaseConfig = require('../../../firebaseConfig.js');
 
 
 router.post('/',(req,res,next) => {
@@ -17,6 +15,11 @@ router.post('/',(req,res,next) => {
     discription:"test discp",
     imgPath:"test/path",
 
+  },(err)=>{
+    if(err)
+      res.json({"Error":err})
+    else 
+      res.json({  "Success":"success"}) 
   });
   res.json({
     "Sucess":"Success"

@@ -17,24 +17,7 @@ router.post('/signUp',(req,res,next) => {
   })
 });
 
-router.post('/fireLoc',(req,res,next) => {
-  firebase.database().ref('fire_loc/'+ req.body.lat + req.body.long).set({
-    lat: req.body.lat,
-    long :req.body.long,
-    isVerified:false,
-    isOpen:true,
-    openDate:"12/12/12",
-    closeDate:"1/1/1/",
-    discription:"test discp",
-    imgPath:"test/path",
-
-  });
-  res.json({
-    "Sucess":"Success"
-  })
-
-});
-
+router.use('/fireLoc',require('./fire'));
 
 
 module.exports = router;

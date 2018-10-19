@@ -5,15 +5,16 @@ const router = express.Router();
 
 
 router.post('/',(req,res,next) => {
+  var d = new Date();
   firebase.database().ref('fire_loc/'+ req.body.lat + req.body.long).set({
     lat: req.body.lat,
     long :req.body.long,
     isVerified:false,
     isOpen:true,
-    openDate:"12/12/12",
+    openDate:new Date(Date.now()).toLocaleString(),
     closeDate:"1/1/1/",
-    discription:"test discp",
-    imgPath:"test/path",
+    discription:req.body.discription,
+    imgPath:req.body.path,
 
   },(err)=>{
     if(err)

@@ -7,7 +7,7 @@ const firebase = require('firebase');
 
 router.post('/',(req,res,next) => {
   var d = new Date();
-  firebase.database().ref('fire_loc/'+ req.body.lat + req.body.long).set({
+  firebase.database().ref('fire_loc/'+ req.body.lat +":"+ req.body.long ).set({
     lat: req.body.lat,
     long :req.body.long,
     isVerified:false,
@@ -16,6 +16,7 @@ router.post('/',(req,res,next) => {
     closeDate:"1/1/1/",
     discription:req.body.discription,
     imgPath:req.body.path,
+    threatLevel : 0
 
   },(err)=>{
     if(err)
@@ -24,6 +25,52 @@ router.post('/',(req,res,next) => {
       res.json({  "Success":"success"}) 
   });
 
+});
+
+router.get('/getAll',(req,res,next)=>{
+  var allFireRef=firebase.database().ref('fire_loc');
+  allFireRef.once('value',function(snap){
+    res.json(snap.val());
+  });
+});
+
+router.post('/verify',(req,res)=>{
+  var fireRef=firebase.database().ref('fire_loc/'+req.body.lat+":"+req.body.long);
+  fireRef.update({
+    isVerified:true
+  },(err)=>{
+    if(err)
+      res.json({"Error":err})
+    else 
+      res.json({  "Success":"success"}) 
+  });
+});
+
+router.post('/close',(req,res)=>{
+  var fireRef=firebase.database().ref('fire_loc/'+req.body.lat+":"+req.body.long);
+  fireRef.update({
+    isOpen:false,
+    closeDate:new Date(Date.now()).toLocaleString()
+
+  },(err)=>{
+    if(err)
+      res.json({"Error":err})
+    else 
+      res.json({  "Success":"success"}) 
+  });
+
+});
+
+router.post('/changeThreat',(req,res)=>{
+  var fireRef=firebase.database().ref('fire_loc/'+req.body.lat+":"+req.body.long);
+  fireRef.update({
+    threatLevel:req.body.newThreatLevel
+  },(err)=>{
+    if(err)
+      res.json({"Error":err})
+    else 
+      res.json({  "Success":"success"}) 
+  });
 });
 
 

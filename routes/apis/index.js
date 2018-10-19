@@ -25,7 +25,14 @@ router.get('/fireLoc',(req,res,next) => {
   });
 
 });
+router.post('/rehabLoc',(req,res,next)=>{
+  firebase.database().ref('rehab_loc/'+req.body.lat+req.body.long).push({
+    lat:req.body.lat,
+    long:req.body.long,
+    phoneNo:req.body.phoneNo
 
+  })
+})
 
 
 module.exports = router;

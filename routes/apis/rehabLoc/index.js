@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const debug = require('debug')('index')
 const router = express.Router()
+const firebase = require('firebase')
 
 
 router.post('/',(req,res,next)=>{
@@ -15,8 +16,5 @@ router.post('/',(req,res,next)=>{
     else 
       res.json({  "Success":"success"}) 
   });
-    res.json({
-        "Success":"Success"
-    })
 })
 module.exports = router

@@ -25,7 +25,11 @@ router.post('/reportFire',(req,res,next) =>
       closeDate:"1/1/1/",
       description:req.body.description,
       imgPath:req.body.path,
-      threatLevel : 0
+      threatLevel : 0,
+      country:country,
+      district:district,
+      state:state
+
   },(err)=>{
     if(err)
     {

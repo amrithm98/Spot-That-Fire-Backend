@@ -6,7 +6,8 @@ const firebase = require('firebase');
 const axios = require('axios');
 
 
-router.post('/',(req,res,next) => {
+router.post('/reportFire',(req,res,next) => 
+{
  axios.get('https://nominatim.openstreetmap.org/reverse.php?format=jsonv2&lat='+req.body.lat+'&lon='+req.body.long+'&zoom=20')
   .then(response => {
     var country=response.data.address.country;
@@ -22,15 +23,17 @@ router.post('/',(req,res,next) => {
       isOpen:true,
       openDate:new Date(Date.now()).toLocaleString(),
       closeDate:"1/1/1/",
-      discription:req.body.discription,
+      description:req.body.description,
       imgPath:req.body.path,
       threatLevel : 0
-
   },(err)=>{
     if(err)
-      res.json({"Error":err})
+    {
+      debug(err);
+      res.json({"success":false});
+    }
     else 
-      res.json({  "Success":"success"}) 
+      res.json({  "success": true}) 
   });
     
   })

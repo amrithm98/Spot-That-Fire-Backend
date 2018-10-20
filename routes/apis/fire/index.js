@@ -11,7 +11,7 @@ router.post('/',(req,res,next) => {
   .then(response => {
     var country=response.data.address.country;
     var state=response.data.address.state;
-    var district=response.data.address.city_district || response.data.address.neighbourhood || response.data.address.suburb ||response.data.address.village ||response.data.address.county;
+    var district=response.data.address.state_district ||response.data.address.city_district || response.data.address.neighbourhood || response.data.address.suburb ||response.data.address.village ||response.data.address.county;
     console.log(response.data.address);
     
     var d = new Date();

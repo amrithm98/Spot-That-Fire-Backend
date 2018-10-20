@@ -12,7 +12,10 @@ const VERIFY_COUNT_THRESHOLD = 5;
 const VERIFY_DISTANCE_THRESHOLD = 5;
 
 
-
+// router.post('/verifive',function(req,res){
+// const peopleVerify = require('../../../middlewares/peopleVerified.js');
+// console.log(peopleVerify(req.body.lat,req.body.long));
+// });
 
 router.post('/victimCount',function(req,res){
   //add verified count

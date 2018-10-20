@@ -5,6 +5,7 @@ const router = express.Router();
 const firebase = require('firebase');
 const axios = require('axios');
 
+const peopleVerified = require('../../../middlewares/peopleVerified.js');
 
 router.post('/getLocDetails',(req,res) =>{
   axios.get('https://nominatim.openstreetmap.org/reverse.php?format=jsonv2&lat='+req.body.lat+'&lon='+req.body.long+'&zoom=20')
@@ -52,8 +53,35 @@ router.post('/reportFire',(req,res,next) =>
       debug(err);
       res.json({"success":false});
     }
-    else 
-      res.json({  "success": true}) 
+    else {
+      // var x = peopleVerified(req.body.lat,req.body.long);
+      let promise = new Promise(function(resolve,reject){
+        console.log(peopleVerified(req.body.lat,req.body.long));
+        console.log("if kerana munne")
+        
+        if(peopleVerified(req.body.lat,req.body.long)){
+          //mark verified
+          console.log("if keri")
+          firebase.database().ref('fire_loc/'+ country +"/"+ state +"/"+ district +"/"+req.body.phone).update({
+            isVerified:true
+          },(err)=>{
+            if(err){
+              console.log(err);
+              reject();
+              //res.json({"Error":err})
+            }
+            else{ 
+              console.log("successfully updated isverified")
+              resolve();
+            };// res.json({  "Success":"success"}) 
+          });
+        }
+       });
+      promise.then(function(){
+      res.json({  "success": true}); 
+      });
+    }
+
   });
     
   })

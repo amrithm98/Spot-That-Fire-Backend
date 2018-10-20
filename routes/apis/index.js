@@ -11,7 +11,7 @@ firebase.initializeApp(firebaseConfig);
 
 router.use('/user',require('./user'))
 router.use('/fireLoc',require('./fire'));
-router.use('/rehabLoc',require('./rehabLoc'));
+router.use('/rehab',require('./rehab'));
 router.use('/verify',require('./verify'));
 
 module.exports = router;

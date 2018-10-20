@@ -23,6 +23,7 @@
         "mysql": "^2.13.0",
         "mysql2": "^1.6.1",
         "request": "^2.81.0",
+        "sendotp": "^1.2.9",
         "sequelize": "^4.39.0",
         "serve-favicon": "^2.5.0",
         "underscore": "^1.8.3"

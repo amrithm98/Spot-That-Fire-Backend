@@ -15,7 +15,7 @@ router.post('/signup',(req,res,next) => {
     console.log(response.data.address);
     
     var d = new Date();
-    firebase.database().ref('users/'+ country +"/"+ state +"/"+district+"/"+req.body.phone).push(
+    firebase.database().ref('users/'+ country +"/"+ state +"/"+district+"/"+req.body.phone).set(
       {
             lat: req.body.lat,
             long :req.body.long,

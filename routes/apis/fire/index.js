@@ -24,7 +24,10 @@ router.post('/',(req,res,next) => {
       closeDate:"1/1/1/",
       discription:req.body.discription,
       imgPath:req.body.path,
-      threatLevel : 0
+      threatLevel : 0,
+      country:country,
+      district:district,
+      state:state
 
   },(err)=>{
     if(err)

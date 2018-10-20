@@ -3,20 +3,28 @@ const app = express();
 const debug = require('debug')('index');
 const router = express.Router();
 const firebase = require('firebase');
+const axios = require('axios');
 
 
 router.post('/',(req,res,next) => {
-  var d = new Date();
-  firebase.database().ref('fire_loc/'+ req.body.lat +":"+ req.body.long ).set({
-    lat: req.body.lat,
-    long :req.body.long,
-    isVerified:false,
-    isOpen:true,
-    openDate:new Date(Date.now()).toLocaleString(),
-    closeDate:"1/1/1/",
-    discription:req.body.discription,
-    imgPath:req.body.path,
-    threatLevel : 0
+ axios.get('https://nominatim.openstreetmap.org/reverse.php?format=jsonv2&lat='+req.body.lat+'&lon='+req.body.long+'&zoom=20')
+  .then(response => {
+    var country=response.data.address.country;
+    var state=response.data.address.state;
+    var district=response.data.address.city_district || response.data.address.neighbourhood || response.data.address.suburb ||response.data.address.village ||response.data.address.county;
+    console.log(response.data.address);
+    
+    var d = new Date();
+    firebase.database().ref('fire_loc/'+ country +"/"+ state +"/"+ district +"/"+req.body.userId).set({
+      lat: req.body.lat,
+      long :req.body.long,
+      isVerified:false,
+      isOpen:true,
+      openDate:new Date(Date.now()).toLocaleString(),
+      closeDate:"1/1/1/",
+      discription:req.body.discription,
+      imgPath:req.body.path,
+      threatLevel : 0
 
   },(err)=>{
     if(err)
@@ -24,6 +32,12 @@ router.post('/',(req,res,next) => {
     else 
       res.json({  "Success":"success"}) 
   });
+    
+  })
+  .catch(error => {
+    console.log(error);
+  });
+
 
 });
 
@@ -32,6 +46,10 @@ router.get('/getAll',(req,res,next)=>{
   allFireRef.once('value',function(snap){
     res.json(snap.val());
   });
+});
+
+router.post('/notify',(req,res)=>{
+  
 });
 
 router.post('/verify',(req,res)=>{

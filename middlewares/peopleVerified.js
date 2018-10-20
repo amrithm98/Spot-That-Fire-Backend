@@ -12,6 +12,8 @@ const VERIFY_COUNT_THRESHOLD = 5;
 
 module.exports = function(lat,long){
   // console.log(lat + " "+long);
+  return new Promise(function(resolve,reject)
+  {
   axios.get('https://nominatim.openstreetmap.org/reverse.php?format=jsonv2&lat='+lat+'&lon='+long+'&zoom=20')
   .then(response => {
     var country=response.data.address.country;
@@ -23,25 +25,29 @@ module.exports = function(lat,long){
     firebase.database().ref('fire_loc/'+ country +"/"+ state+"/"+district ).once('value').then(function(snapshot){
       // console.log(snapshot.val());
       var count = snapshot.numChildren();
+      var ret = {};
+      ret["snapshot"] = snapshot;
       console.log(count);
       if(count>= VERIFY_COUNT_THRESHOLD){
         console.log("YEAH VERIFIED");
-        return true;
+        ret["success"]=true;
+        resolve(ret);
       }
       else{
         console.log("NOT VERIFIED");
         
-        return false;
+        resolve(false);
 
       }
       })
       .catch(function(err){
-        return null;  
+        reject(err);  
       });
     
   })
   .catch(function(err){
     console.log(err);
-    return null;
+    reject(null);
   });
-}
+});
+};

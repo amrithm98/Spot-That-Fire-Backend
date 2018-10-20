@@ -47,49 +47,57 @@ router.post('/reportFire',(req,res,next) =>
       district:district,
       state:state
 
-  },(err)=>{
-    if(err)
-    {
-      debug(err);
-      res.json({"success":false});
-    }
-    else {
-      // var x = peopleVerified(req.body.lat,req.body.long);
-      let promise = new Promise(function(resolve,reject){
-        console.log(peopleVerified(req.body.lat,req.body.long));
-        console.log("if kerana munne")
+    },(err)=>{
+      if(err)
+      {
+        debug(err);
+        res.json({"success":false});
+      }
+      else {
+        // var x = peopleVerified(req.body.lat,req.body.long);
+        peopleVerified(req.body.lat,req.body.long).then(function(result){
         
-        if(peopleVerified(req.body.lat,req.body.long)){
+        if(result["success"]){
           //mark verified
-          console.log("if keri")
-          firebase.database().ref('fire_loc/'+ country +"/"+ state +"/"+ district +"/"+req.body.phone).update({
-            isVerified:true
-          },(err)=>{
-            if(err){
-              console.log(err);
-              reject();
-              //res.json({"Error":err})
-            }
-            else{ 
-              console.log("successfully updated isverified")
-              resolve();
-            };// res.json({  "Success":"success"}) 
-          });
-        }
-       });
-      promise.then(function(){
-      res.json({  "success": true}); 
-      });
-    }
+          console.log("if keri");
+          console.log(result["snapshot"].val());
+          var snapshot = result["snapshot"];
+          for(var phone in snapshot.val()){
+            //
+            firebase.database().ref('fire_loc/'+ country +"/"+ state +"/"+ district +"/"+phone).update({
+              isVerified:true
+            },(err)=>{
+              if(err){
+                console.log(err);
+                reject(err);
+              }
+              else{ 
+                console.log("successfully updated isverified")
+                // res.json({  "Success":"successfully updated verified"});
+              };
+            });
+            // resolve(true);
 
-  });
-    
+          };    
+          
+        }
+       })
+       .then(function(result){
+        res.json({  "Success":"successfully updated verified"});
+       })
+       .catch(error => {
+        console.log(error);
+        res.json({"Error":err});
+        
+      });   
+    }
+  });   
   })
   .catch(error => {
     console.log(error);
+    res.json({"Error":err});
+    
   });
-
-
 });
 
 router.get('/getAll',(req,res,next)=>{

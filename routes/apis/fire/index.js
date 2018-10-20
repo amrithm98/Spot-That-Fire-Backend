@@ -6,6 +6,22 @@ const firebase = require('firebase');
 const axios = require('axios');
 
 
+router.post('/getLocDetails',(req,res) =>{
+  axios.get('https://nominatim.openstreetmap.org/reverse.php?format=jsonv2&lat='+req.body.lat+'&lon='+req.body.long+'&zoom=20')
+  .then(response => {
+    var country=response.data.address.country;
+    var state=response.data.address.state;
+    var district=response.data.address.state_district ||response.data.address.city_district || response.data.address.neighbourhood || response.data.address.suburb ||response.data.address.village ||response.data.address.county;
+    
+    var result = {"country":country,"state":state,"district":district};
+    console.log(response.data.address);
+    console.log(result);
+    return res.json(result);
+  }).catch(err=>{
+
+  });
+});
+
 router.post('/reportFire',(req,res,next) => 
 {
  axios.get('https://nominatim.openstreetmap.org/reverse.php?format=jsonv2&lat='+req.body.lat+'&lon='+req.body.long+'&zoom=20')
@@ -16,7 +32,7 @@ router.post('/reportFire',(req,res,next) =>
     console.log(response.data.address);
     
     var d = new Date();
-    firebase.database().ref('fire_loc/'+ country +"/"+ state +"/"+ district +"/"+req.body.userId).set({
+    firebase.database().ref('fire_loc/'+ country +"/"+ state +"/"+ district +"/"+req.body.phone).set({
       lat: req.body.lat,
       long :req.body.long,
       isVerified:false,

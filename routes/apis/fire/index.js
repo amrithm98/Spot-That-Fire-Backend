@@ -61,8 +61,8 @@ var updateIsVerified = function (snapshot, country, state, district) {
           // res.json({  "Success":"successfully updated verified"});
         };
       });
-      // resolve(true);
     };
+    // resolve(false);
 
   });
 };
@@ -109,24 +109,29 @@ router.post('/reportFire', (req, res, next) => {
       }, (err) => {
         if (err) {
           debug(err);
-          res.json({ "success": false });
+          return res.json({ "success": false });
         }
         else {
-          // var x = peopleVerified(req.body.lat,req.body.long);
+          //VERIFICATION BY PEOPLE
           peopleVerified(req.body.lat, req.body.long).then(function (result) {
             var snapshot = result["snapshot"];
 
             if (result["success"]) {
               //mark verified
-              console.log("people Verified TRUE");
-              console.log(result["snapshot"].val());
+              console.log("people Verified TRUE, need to update isverified");
 
               updateIsVerified(snapshot, country, state, district).then(function (result) {
                 //error illa
-                console.log(result);
-                // sendPush(district);
-                res.send({ "Success": "people verified TRUE, isverified updated" });
-                return snapshot;
+                console.log("RESULT:"+result);
+                if(result === true){
+                  console.log("completed");
+                return res.json({ "Success": "people verified TRUE, isverified updated" });
+                }
+                // else{
+                //   return snapshot;
+                // }
+              }).catch(function(err){
+                console.log(err)
               });
 
             }
@@ -136,38 +141,48 @@ router.post('/reportFire', (req, res, next) => {
               // console.log(snapshot.val());
               return snapshot;
             }
-            else{
-              return snapshot;
-            }
+            // return snapshot;
           })
             .then(function (snapshot) {
-              console.log(snapshot.val());
+              if(snapshot!=null){
+              // console.log(snapshot.val());
               nasaVerified(req.body.lat, req.body.long).then(function (result) {
                 if (result) {
                   console.log("NASA verification TRUE");
-                  updateIsVerified(snapshot, country, state, district).then(function () {
+                  updateIsVerified(snapshot, country, state, district).then(function (result) {
                     //error illa
-                    // sendPush(district);
-                    res.json({ "Success": "NASA verified, isverified updated" });
+                    if(result === true)
+                      return res.json({ "Success": "NASA verified, isverified updated" });
+                  })
+                  .catch(function(e){
+                    console.log("yeah");  
                   });
                   //isverify true
                 } else {
                   console.log("NASA verification FALSE");
-                  res.json({ "Success": "added report, not in nasa, not 5 verified req yet." });
+                  return res.json({ "Success": "added report, not in nasa, not 5 verified req yet." });
                 }
+              }).catch(function(error){
+                console.log("IVDEEE1");
+                console.log(error);
               });
-            })
+            }
+        })  
             .catch(error => {
+              console.log("IVDEEE2");
+              
               console.log(error);
-              res.json({ "Error": err });
+              // res.json({ "Error": err });
 
             });
         }
       });
     })
     .catch(error => {
+      console.log("IVDEEE3");
+      
       console.log(error);
-      res.json({ "Error": err });
+      // res.json({ "Error": err });
 
     });
 });
@@ -175,7 +190,7 @@ router.post('/reportFire', (req, res, next) => {
 router.get('/getAll', (req, res, next) => {
   var allFireRef = firebase.database().ref('fire_loc');
   allFireRef.once('value', function (snap) {
-    res.json(snap.val());
+    res.json(snap.val()); 
   });
 });
 

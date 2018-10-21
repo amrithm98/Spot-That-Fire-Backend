@@ -29,25 +29,28 @@ module.exports = function(lat,long){
       ret["snapshot"] = snapshot;
       console.log(count);
       if(count>= VERIFY_COUNT_THRESHOLD){
-        console.log("YEAH VERIFIED");
+        console.log("PEOPLE VERIFIED");
         ret["success"]=true;
         resolve(ret);
       }
       else{
         ret["success"]=false;
-        console.log("NOT VERIFIED");
+        console.log("PEOPLE VERIFIED < 5");
         resolve(ret);
 
       }
       })
       .catch(function(err){
+        console.log("peopleVerified/Entered error1");
         reject(err);  
       });
     
   })
   .catch(function(err){
     console.log(err);
-    reject(null);
+    console.log("peopleVerified/Entered error2")
+    
+    reject(err);
   });
 });
 };

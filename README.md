@@ -10,3 +10,10 @@ Built in Nodejs.
 <li> Verification & Notifying </li>
 <li> Relief Camps </li>
 </ul>
+
+# Setup
+
+`npm install`
+### Add config.js
+
+`npm start`

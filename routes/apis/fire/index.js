@@ -4,14 +4,44 @@ const debug = require('debug')('index');
 const router = express.Router();
 const firebase = require('firebase');
 const axios = require('axios');
+const admin = require('firebase-admin');
+const serviceAccount = require('./firebase.json');
 
 const peopleVerified = require('../../../middlewares/peopleVerified.js');
 const nasaVerified = require('../../../middlewares/eonetVerified.js');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://spot-that-fire-nsac.firebaseio.com"
+});
+// See documentation on defining a message payload.
+var message = {
+    notification: {
+        title: "WildFire Alert",
+        body: "A WildFire has been reported in a region near you"
+    },
+    topic: "1"
+};
+
+function sendPush(topic)
+{
+    console.log("SENDING NOTIFICATION");
+    // console.log(message);
+    message.topic = topic;
+    // Send a message to devices subscribed to the provided topic.
+    admin.messaging().send(message).then((response) => {
+        // Response is a message ID string.
+        console.log('Successfully sent message:', response);
+    }).catch((error) => {
+        console.log('Error sending message:', error);
+    });
+}
 
 var updateIsVerified = function (snapshot, country, state, district) {
   return new Promise(function (resolve, reject) {
     var count = snapshot.numChildren();
     var i = 0;
+    console.log("Hello")
     for (var phone in snapshot.val()) {
       //
       firebase.database().ref('fire_loc/' + country + "/" + state + "/" + district + "/" + phone).update({
@@ -64,12 +94,12 @@ router.post('/reportFire', (req, res, next) => {
       var d = new Date();
       firebase.database().ref('fire_loc/' + country + "/" + state + "/" + district + "/" + req.body.phone).set({
         lat: req.body.lat,
-        long: req.body.long,
+        lng: req.body.long,
         isVerified: false,
         isOpen: true,
         openDate: new Date(Date.now()).toLocaleString(),
         closeDate: "1/1/1/",
-        description: req.body.description,
+        description: req.body.desc,
         imgPath: req.body.path,
         threatLevel: 0,
         country: country,
@@ -89,17 +119,24 @@ router.post('/reportFire', (req, res, next) => {
             if (result["success"]) {
               //mark verified
               console.log("people Verified TRUE");
-              // console.log(result["snapshot"].val());
+              console.log(result["snapshot"].val());
 
-              updateIsVerified(snapshot, country, state, district).then(function () {
+              updateIsVerified(snapshot, country, state, district).then(function (result) {
                 //error illa
-                res.json({ "Success": "people verified TRUE, isverified updated" });
+                console.log(result);
+                // sendPush(district);
+                res.send({ "Success": "people verified TRUE, isverified updated" });
+                return snapshot;
               });
+
             }
             else if (result["success"] === false) {
               console.log("people verification NOT 5 YET");
               // resolve(result["snapshot"]);
               // console.log(snapshot.val());
+              return snapshot;
+            }
+            else{
               return snapshot;
             }
           })
@@ -110,6 +147,7 @@ router.post('/reportFire', (req, res, next) => {
                   console.log("NASA verification TRUE");
                   updateIsVerified(snapshot, country, state, district).then(function () {
                     //error illa
+                    // sendPush(district);
                     res.json({ "Success": "NASA verified, isverified updated" });
                   });
                   //isverify true

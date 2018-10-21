@@ -8,7 +8,7 @@ const axios = require('axios');
 
 const calcDistance = require('./calcDistance.js');
 // firebase.initializeApp(firebaseConfig);
-const VERIFY_COUNT_THRESHOLD = 5;
+const VERIFY_COUNT_THRESHOLD = 2;
 
 module.exports = function(lat,long){
   // console.log(lat + " "+long);

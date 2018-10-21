@@ -20,12 +20,12 @@ var message = {
         title: "WildFire Alert",
         body: "A WildFire has been reported in a region near you"
     },
-    topic: "1"
+    topic: "Thiruvananthapuram"
 };
 
 function sendPush(topic)
 {
-    console.log("SENDING NOTIFICATION");
+    console.log("SENDING NOTIFICATION to "+ topic);
     // console.log(message);
     message.topic = topic;
     // Send a message to devices subscribed to the provided topic.
@@ -125,6 +125,7 @@ router.post('/reportFire', (req, res, next) => {
                 console.log("RESULT:"+result);
                 if(result === true){
                   console.log("completed");
+                  sendPush(district);
                 return res.json({ "Success": "people verified TRUE, isverified updated" });
                 }
                 // else{
@@ -152,7 +153,11 @@ router.post('/reportFire', (req, res, next) => {
                   updateIsVerified(snapshot, country, state, district).then(function (result) {
                     //error illa
                     if(result === true)
+                    {
+                      sendPush(district);
                       return res.json({ "Success": "NASA verified, isverified updated" });
+
+                    }
                   })
                   .catch(function(e){
                     console.log("yeah");  

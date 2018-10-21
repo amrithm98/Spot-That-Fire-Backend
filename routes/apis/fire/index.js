@@ -37,7 +37,6 @@ var updateIsVerified = function (snapshot, country, state, district) {
   });
 };
 
-
 router.post('/getLocDetails', (req, res) => {
   axios.get('https://nominatim.openstreetmap.org/reverse.php?format=jsonv2&lat=' + req.body.lat + '&lon=' + req.body.long + '&zoom=20')
     .then(response => {

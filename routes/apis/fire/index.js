@@ -67,7 +67,8 @@ var updateIsVerified = function (snapshot, country, state, district) {
   });
 };
 
-router.post('/getLocDetails', (req, res) => {
+router.post('/getLocDetails', (req, res,next) => {
+  debug("Called API");
   axios.get('https://nominatim.openstreetmap.org/reverse.php?format=jsonv2&lat=' + req.body.lat + '&lon=' + req.body.long + '&zoom=20')
     .then(response => {
       var country = response.data.address.country;
@@ -75,11 +76,12 @@ router.post('/getLocDetails', (req, res) => {
       var district = response.data.address.state_district || response.data.address.city_district || response.data.address.neighbourhood || response.data.address.suburb || response.data.address.village || response.data.address.county;
 
       var result = { "country": country, "state": state, "district": district };
-      console.log(response.data.address);
-      console.log(result);
+      debug(response.data.address);
+      debug(result);
       return res.json(result);
     }).catch(err => {
-
+        debug(err);
+        return next();
     });
 });
 
